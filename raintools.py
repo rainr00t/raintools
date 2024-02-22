@@ -18,23 +18,20 @@ print(pattern)
 def get_whois_data(domain_name):
 
   try:
-    # Default whois server port
+
     port = 43
 
-    # Get the whois server for the domain
     whois_server = socket.gethostbyname("whois.iana.org")
 
-    # Create a TCP socket
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Connect to the whois server
+
     sock.connect((whois_server, port))
 
-    # Send the domain name query
     query = f"{domain_name}\r\n".encode()
     sock.sendall(query)
 
-    # Receive the whois data
     whois_data = b""
     while True:
       data = sock.recv(1024)
@@ -42,7 +39,6 @@ def get_whois_data(domain_name):
         break
       whois_data += data
 
-    # Close the socket
     sock.close()
 
     return whois_data.decode()
@@ -96,46 +92,42 @@ def is_port_open(host, port):
     """
     determine whether `host` has the `port` open
     """
-    # creates a new socket
+
     s = socket.socket()
     try:
-        # tries to connect to host using that port
+
         s.connect((host, port))
-        # make timeout if you want it a little faster ( less accuracy )
+   
         s.settimeout(2)
     except:
-        # cannot connect, port is closed
-        # return false
+    
         return False
     else:
-        # the connection was established, port is open!
+
         return True
     
 
 def send_packet(host, message, interval, num_packets):
-    """
-    sends `message` to `host` with an interval of `interval` seconds, for a total of `num_packets` packets
-    """
-    # create a new socket
+
     s = socket.socket()
 
-    # connect to the host
+
     s.connect((host, 80))
 
-    # send the message `num_packets` times, with an interval of `interval` seconds between each packet
+
     for i in range(num_packets):
         s.send(message.encode())
         a = 0
         print(i+1 , "package sent sufccessfully")
         time.sleep(interval)
 
-    # close the socket
+  
     s.close()
 
 fruit = input("Select a number: ")
 
 if fruit == "1":   
-# Example usage
+
     print("running WHOIS tool...")
     domain_name = input("Domain: ")
     whois_data = get_whois_data(domain_name)
@@ -162,7 +154,7 @@ elif fruit == "3":
     print(ip_addresses)
     
 elif fruit == "4":
-    # Example usage
+
     ip_address = input("Enter an IP address:")
     hostname = get_hostname_from_ip(ip_address)
 
@@ -172,14 +164,14 @@ elif fruit == "4":
         print(f"No hostname found for {ip_address}.")
 elif fruit == "5":
   
-  # get user input for host
+
     host = input("Enter the host (IP address or website): ")
 
-# get user input for start and end port
+
     start_port = int(input("Enter the starting port: "))
     end_port = int(input("Enter the ending port: "))
     print("Please wait for a while, it may look like it is frozen but it is not.")
-# iterate over ports, from start_port to end_port
+
     for port in range(start_port, end_port+1):
         if is_port_open(host, port):
             print(f"{Fore.GREEN}[+] {host}:{port} is open{Style.RESET_ALL}")
@@ -187,19 +179,18 @@ elif fruit == "5":
         print(f"{Fore.RED}[!] {host}:{port} is closed{Style.RESET_ALL}", end="\r")
 
 elif fruit == "6":
-    # get user input for host
+ 
     host = input("Enter the host (IP address or website): ")
 
-    # get user input for message
+
     message = input("Enter the message: ")
 
-    # get user input for interval (in seconds)
+
     interval = float(input("Enter the interval between packets (in seconds): "))
 
-    # get user input for number of packets to send
+  
     num_packets = int(input("Enter the number of packets to send: "))
 
-    # send the packets
     send_packet(host, message, interval, num_packets)
 
     print(f"Sent {num_packets} packets to {host} with message: {message} and interval: {interval} seconds")
